@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.29 (MiKTeX 26.5) (preloaded format=pdflatex 2026.10.14)  14 OCT 2026 14:21
+This is pdfTeX, Version 3.141592653-2.6-1.40.29 (MiKTeX 26.5) (preloaded format=pdflatex 2026.10.14)  14 OCT 2026 18:21
 entering extended mode
  \write18 enabled.
  file:line:error style messages enabled.
@@ -608,10 +608,10 @@ LaTeX Info: Redefining \% on input line 89.
 \pydata@fh@0=\write6
 \openout6 = `_7EA1741B60D49FA4EC336863AE3845A1.data.minted'.
 
-runsystem(latexminted config  --timestamp 20261014142137 7EA1741B60D49FA4EC336863AE3845A1)...executed.
+runsystem(latexminted config  --timestamp 20261014182149 7EA1741B60D49FA4EC336863AE3845A1)...executed.
 
  (_7EA1741B60D49FA4EC336863AE3845A1.config.minted)
-runsystem(latexminted cleanconfig  --timestamp 20261014142137 7EA1741B60D49FA4EC336863AE3845A1)...executed.
+runsystem(latexminted cleanconfig  --timestamp 20261014182149 7EA1741B60D49FA4EC336863AE3845A1)...executed.
 
  (_minted/default.style.minted) (_minted/B6025CDD5B042386382DE6D1A34CED85.highlight.minted
 LaTeX Font Info:    Font shape `OT1/cmtt/bx/n' in size <12> not available
@@ -652,9 +652,54 @@ Package pdftex.def Info: resultadoConsola.png  used on input line 345.
 LaTeX Info: Redefining \. on input line 348.
 LaTeX Info: Redefining \% on input line 348.
  [11 <./codigoConsola.png>]
-LaTeX Info: Redefining \. on input line 364.
-LaTeX Info: Redefining \% on input line 364.
- [12 <./resultadoConsola.png>] 
+<formLogin.png, id=117, 368.577pt x 392.06474pt>
+File: formLogin.png Graphic file (type png)
+<use formLogin.png>
+Package pdftex.def Info: formLogin.png  used on input line 357.
+(pdftex.def)             Requested size: 283.22156pt x 301.28058pt.
+LaTeX Info: Redefining \. on input line 362.
+LaTeX Info: Redefining \% on input line 362.
+ [12 <./resultadoConsola.png> <./formLogin.png>]
+<peticionIntercep.png, id=126, 501.67426pt x 287.8755pt>
+File: peticionIntercep.png Graphic file (type png)
+<use peticionIntercep.png>
+Package pdftex.def Info: peticionIntercep.png  used on input line 365.
+(pdftex.def)             Requested size: 424.82512pt x 243.78165pt.
+<responseIntercep.png, id=127, 463.7325pt x 406.51875pt>
+File: responseIntercep.png Graphic file (type png)
+<use responseIntercep.png>
+Package pdftex.def Info: responseIntercep.png  used on input line 375.
+(pdftex.def)             Requested size: 424.82512pt x 372.42001pt.
+LaTeX Info: Redefining \. on input line 378.
+LaTeX Info: Redefining \% on input line 378.
+ [13 <./peticionIntercep.png>]
+<peticionMala.png, id=135, 523.9575pt x 326.4195pt>
+File: peticionMala.png Graphic file (type png)
+<use peticionMala.png>
+Package pdftex.def Info: peticionMala.png  used on input line 386.
+(pdftex.def)             Requested size: 424.82512pt x 264.6673pt.
+LaTeX Info: Redefining \. on input line 389.
+LaTeX Info: Redefining \% on input line 389.
+ [14 <./responseIntercep.png>]
+<responseMala.png, id=142, 339.06676pt x 196.93575pt>
+File: responseMala.png Graphic file (type png)
+<use responseMala.png>
+Package pdftex.def Info: responseMala.png  used on input line 394.
+(pdftex.def)             Requested size: 424.82512pt x 246.746pt.
+LaTeX Info: Redefining \. on input line 397.
+LaTeX Info: Redefining \% on input line 397.
+ [15 <./peticionMala.png>]
+<pth.png, id=149, 1113.56026pt x 429.40425pt>
+File: pth.png Graphic file (type png)
+<use pth.png>
+Package pdftex.def Info: pth.png  used on input line 402.
+(pdftex.def)             Requested size: 472.03113pt x 182.0259pt.
+LaTeX Info: Redefining \. on input line 412.
+LaTeX Info: Redefining \% on input line 412.
+ [16 <./responseMala.png> <./pth.png>]
+LaTeX Info: Redefining \. on input line 430.
+LaTeX Info: Redefining \% on input line 430.
+ [17] 
 enddocument/afterlastpage (AED): lastpage setting LastPage.
 (informe.aux
 LaTeX Info: Redefining \. on input line 13.
@@ -668,17 +713,17 @@ Package rerunfilecheck Info: File `informe.out' has not changed.
 (rerunfilecheck)             Checksum: FD48104A8D64C9C4CC387DF72E54D870;2931.
  ) 
 Here is how much of TeX's memory you used:
- 19373 strings out of 467392
- 377158 string characters out of 5406124
+ 19426 strings out of 467392
+ 378174 string characters out of 5406124
  932573 words of memory out of 5000000
- 48401 multiletter control sequences out of 15000+600000
+ 48443 multiletter control sequences out of 15000+600000
  635689 words of font info for 65 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 74i,12n,90p,713b,1295s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 74i,13n,90p,713b,1295s stack positions out of 10000i,1000n,20000p,200000b,200000s
 <C:/Users/Ihan/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmbx12.pfb><C:/Users/Ihan/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmbxti10.pfb><C:/Users/Ihan/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmitt10.pfb><C:/Users/Ihan/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi12.pfb><C:/Users/Ihan/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi6.pfb><C:/Users/Ihan/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr12.pfb><C:/Users/Ihan/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr17.pfb><C:/Users/Ihan/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr6.pfb><C:/Users/Ihan/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsl12.pfb><C:/Users/Ihan/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy6.pfb><C:/Users/Ihan/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmtt12.pfb>
-Output written on informe.pdf (12 pages, 242334 bytes).
+Output written on informe.pdf (17 pages, 1030793 bytes).
 PDF statistics:
- 177 PDF objects out of 1000 (max. 8388607)
- 27 named destinations out of 1000 (max. 500000)
- 93 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 222 PDF objects out of 1000 (max. 8388607)
+ 38 named destinations out of 1000 (max. 500000)
+ 123 words of extra memory for PDF output out of 10000 (max. 10000000)
 

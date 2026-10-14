@@ -5,6 +5,6 @@
 \contentsline {subsection}{\numberline {2.2}Identifica el algoritmo de hash utilizado al momento de iniciar sesión}{9}{subsection.2.2}%
 \contentsline {subsection}{\numberline {2.3}Genera el hash de la contraseña desde la consola del navegador}{11}{subsection.2.3}%
 \contentsline {subsection}{\numberline {2.4}Intercepta el tráfico login con BurpSuite}{12}{subsection.2.4}%
-\contentsline {subsection}{\numberline {2.5}Realiza el intento de login}{12}{subsection.2.5}%
-\contentsline {subsection}{\numberline {2.6}Identifica las políticas de privacidad o seguridad}{12}{subsection.2.6}%
-\contentsline {subsection}{\numberline {2.7}Demuestra 4 conclusiones sobre la seguridad}{12}{subsection.2.7}%
+\contentsline {subsection}{\numberline {2.5}Realiza el intento de login}{14}{subsection.2.5}%
+\contentsline {subsection}{\numberline {2.6}Identifica las políticas de privacidad o seguridad}{17}{subsection.2.6}%
+\contentsline {subsection}{\numberline {2.7}Demuestra 4 conclusiones sobre la seguridad}{17}{subsection.2.7}%

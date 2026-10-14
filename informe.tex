@@ -69,7 +69,7 @@ Dado que la cantidad de sitios chilenos que utilizan hash es limitada, se permit
 \newpage
 \section{Desarrollo de actividades según criterio de rúbrica}
 
-Para el desarrollo de esta experiencia de laboratorio se utilizó la página web \textbf{\textit{mega.io}}, con un poco de investigación se descubrió que este servicio de almacenamiento en la nube y file-sharing hace \textbf{hashing} en el lado del cliente, esto debido a su mecanismo de \textbf{zero-knowledge}, que básicamente significa que toda la encriptación y desencriptación se hace en el dispositivo del usuario, de esa forma ni siquiera MEGA puede acceder a tus archivos y obviamente la contraseña.
+Para el desarrollo de esta experiencia de laboratorio se utilizó la página web \textbf{\textit{mega.io \slash mega.nz}}, con un poco de investigación se descubrió que este servicio de almacenamiento en la nube y file-sharing hace \textbf{hashing} en el lado del cliente, esto debido a su mecanismo de \textbf{zero-knowledge}, que básicamente significa que toda la encriptación y desencriptación se hace en el dispositivo del usuario, de esa forma ni siquiera MEGA puede acceder a tus archivos y obviamente la contraseña en texto plano.
 
 \begin{figure}[H]
     \centering
@@ -350,13 +350,79 @@ El hak esperado es el mismo valor que se observa en la figura 2, y el calculado 
 
 \subsection{Intercepta el tráfico login con BurpSuite}
 
+Al igual que se hizo en el laboratorio número 2, se utilizó BurpSuite para interceptar el tráfico con su función proxy y su navegador interno. En la figura 5 se puede ver el formulario de login de MEGA con los datos utilizados de prueba.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.6\textwidth]{formLogin.png}
+    \caption{Formulario de login de MEGA con datos de prueba}
+\end{figure}
+
+Al momento de hacer click en el botón de login, se interceptan varias peticiones POST, pero la que nos interesa es la que contiene el campo uh (User Hash) y el correo electrónico, ya que este es el hash que se utiliza para verificar la autenticación.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{peticionIntercep.png}
+    \caption{Petición de login interceptada con BurpSuite}
+\end{figure}
+
+La figura 6 muestra la petición interceptada, la cual contiene campos de metadatos sobre el protocolo, versión del navegador, etc. Abajo del todo aparecen los datos de user y uh, que es ``XsJ9T3-JdRFRfoOMT1YaNg'' este es el hash correcto para iniciar sesión que necesitaremos más adelante.
+
+A esta petición le llega la respuesta de parte del servidor con código 200 OK con algunos datos que se rescatan de la base de datos, como la master key ``k'', se puede ver en la figura 7.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{responseIntercep.png}
+    \caption{Respuesta de la petición de login interceptada con BurpSuite}
+\end{figure}
 
 
 \subsection{Realiza el intento de login}
 
+Para esta parte se tuvo que interceptar un intento incorrecto de login, para luego modificar el campo uh con el hash correcto ya interceptado anteriormente.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{peticionMala.png}
+    \caption{Petición de login incorrecto.}
+\end{figure}
+
+En la figura 8 se puede observar un hash distinto al obtenido en el intento de login correcto interceptado, esto tiene como consecuencia directa una respuesta erronea de parte del servidor sin ningun dato de los que se veian en la figura 7, simplemente un arreglo con un único valor -9 que significa error de credenciales, como se puede ver en la figura 9.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{responseMala.png}
+    \caption{Respuesta de la petición de login incorrecto.}
+\end{figure}
+
+Para realizar el ataque \textbf{Pass The Hash} se debe enviar la petición incorrecta a la herramienta repeater de BurpSuite, y modificar el campo uh con el hash correcto.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{pth.png}
+    \caption{Ataque Pass The Hash realizado en repeater de BurpSuite.}
+\end{figure}
+
+En la figura 10 se puede ver el envío y respuesta de la petición modificado, dando como resultado la misma respuesta que se obtuvo en la figura 7, es decir, el ataque fue exitoso y se pudo iniciar sesión con el hash correcto sin necesidad de conocer la contraseña.
+
 \subsection{Identifica las políticas de privacidad o seguridad}
 
+\textbf{Seguridad:} \url{https://mega.io/security}
+
+La arquitectura de seguridad de MEGA se basa en el principio de conocimiento cero, es decir, que los datos del usuario se cifran y descifran en el dispositivo de cada miembro de MEGA y no en sus servidores. Esto significa que ni siquiera la plataforma tiene acceso a los datos de sus usuarios. Además cuando alguien comparte un archivo a través de MEGA, el sistema usa la clave pública del destinatario para cifrar el contenido, el receptor utiliza su clave privada para descifrarlo localmente.
+
+\textbf{Privacidad} \url{https://mega.io/privacy}
+
+La política de privacidad de la plataforma está ligada directamente a su diseño de zero-knowledge, ellos no tendrán acceso a tus datos (data blindness), aunque esto no significa que no tomen tu dirección de correo electrónico, dirección IP, dispositivo, etc. para operar de manera correcta. Habrá veces que se necesite pedir permisos en el dispositivo para acceder a contactos, cámara, micrófono, etc. Por último, sus políticas se rigen por las regulaciones estrictas de protección de datos de la Unión Europea.
+
 \subsection{Demuestra 4 conclusiones sobre la seguridad}
+
+\begin{itemize}
+    \item El uso de los algoritmos seleccionados en esta plataforma (PBKDF2 con HMAC-SHA512 y SHA-256) es adecuado para proteger las contraseñas de los usuarios y dificultar los ataques de fuerza bruta.
+    \item La política zero-knowledge de MEGA garantiza que los datos del usuario estén seguros y privados en todo momento.
+    \item El ataque de pass the hash demostró que a pesar de tener buena seguridad implementada a través del cliente, si un atacante logra interceptar el hash correcto, puede inciciar sesión sin necesidad de conocer la contraseña.
+    \item Tanto el hashing de lado del cliente como de lado del servidor tienen sus pros y contras, todo dependerá de la implementación ya que ningún sistema se salva de vulnerabilidades, por lo que constantemente se debe estar revisando los mecanismos y estandares de seguridad.
+\end{itemize}
 
 % Please add the following required packages to your document preamble:
 %\begin{table}[htbp]
