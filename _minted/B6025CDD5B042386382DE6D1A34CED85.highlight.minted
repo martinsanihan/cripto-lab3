@@ -1,0 +1,44 @@
+\begin{MintedVerbatim}[commandchars=\\\{\}]
+\PYG{n+nx}{startRegistration}\PYG{o}{:}\PYG{+w}{ }\PYG{k+kd}{function}\PYG{p}{(}\PYG{n+nx}{firstName}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nx}{lastName}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nx}{email}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nx}{password}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nx}{fromProPage}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nx}{completeCallback}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nx}{skipLoading}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{        }\PYG{l+s+s1}{\PYGZsq{}use strict\PYGZsq{}}\PYG{p}{;}
+
+\PYG{+w}{        }\PYG{k}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{k}{this}\PYG{p}{.}\PYG{n+nx}{sendEmailRequestParams}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{            }\PYG{n+nx}{console}\PYG{p}{.}\PYG{n+nx}{error}\PYG{p}{(}\PYG{l+s+s1}{\PYGZsq{}startRegistration blocked, ongoing.\PYGZsq{}}\PYG{p}{);}
+\PYG{+w}{            }\PYG{k}{return}\PYG{p}{;}
+\PYG{+w}{        }\PYG{p}{\PYGZcb{}}
+\PYG{+w}{        }\PYG{k}{this}\PYG{p}{.}\PYG{n+nx}{sendEmailRequestParams}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{k+kc}{true}\PYG{p}{;}
+
+\PYG{+w}{        }\PYG{k}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{o}{!}\PYG{n+nx}{skipLoading}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{            }\PYG{c+c1}{// Show loading dialog}
+\PYG{+w}{            }\PYG{n+nx}{loadingDialog}\PYG{p}{.}\PYG{n+nx}{show}\PYG{p}{();}
+\PYG{+w}{        }\PYG{p}{\PYGZcb{}}
+
+\PYG{+w}{        }\PYG{c+c1}{// First create an ephemeral account and the Master Key (to be removed at a later date)}
+\PYG{+w}{        }\PYG{n+nx}{security}\PYG{p}{.}\PYG{n+nx}{register}\PYG{p}{.}\PYG{n+nx}{createEphemeralAccount}\PYG{p}{(}\PYG{k+kd}{function}\PYG{p}{()}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+
+\PYG{+w}{            }\PYG{c+c1}{// Derive the Client Random Value, Encrypted Master Key and Hashed Authentication Key}
+\PYG{+w}{            }\PYG{n+nx}{security}\PYG{p}{.}\PYG{n+nx}{deriveKeysFromPassword}\PYG{p}{(}\PYG{n+nx}{password}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nx}{u\PYGZus{}k}\PYG{p}{)}
+\PYG{+w}{                }\PYG{p}{.}\PYG{n+nx}{then}\PYG{p}{((\PYGZob{}}\PYG{n+nx}{clientRandomValueBytes}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nx}{encryptedMasterKeyArray32}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nx}{hashedAuthenticationKeyBytes}\PYG{p}{\PYGZcb{})}\PYG{+w}{ }\PYG{p}{=\PYGZgt{}}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+
+\PYG{+w}{                    }\PYG{c+c1}{// Encode parameters to Base64 before sending to the API}
+\PYG{+w}{                    }\PYG{k+kd}{const}\PYG{+w}{ }\PYG{n+nx}{req}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{                        }\PYG{n+nx}{a}\PYG{o}{:}\PYG{+w}{ }\PYG{l+s+s1}{\PYGZsq{}uc2\PYGZsq{}}\PYG{p}{,}
+\PYG{+w}{                        }\PYG{n+nx}{n}\PYG{o}{:}\PYG{+w}{ }\PYG{n+nx}{base64urlencode}\PYG{p}{(}\PYG{n+nx}{to8}\PYG{p}{(}\PYG{n+nx}{firstName}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{l+s+s1}{\PYGZsq{} \PYGZsq{}}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{n+nx}{lastName}\PYG{p}{)),}\PYG{+w}{         }\PYG{c+c1}{// Name (used just for the email)}
+\PYG{+w}{                        }\PYG{n+nx}{m}\PYG{o}{:}\PYG{+w}{ }\PYG{n+nx}{base64urlencode}\PYG{p}{(}\PYG{n+nx}{email}\PYG{p}{),}\PYG{+w}{                                   }\PYG{c+c1}{// Email}
+\PYG{+w}{                        }\PYG{n+nx}{crv}\PYG{o}{:}\PYG{+w}{ }\PYG{n+nx}{ab\PYGZus{}to\PYGZus{}base64}\PYG{p}{(}\PYG{n+nx}{clientRandomValueBytes}\PYG{p}{),}\PYG{+w}{                   }\PYG{c+c1}{// Client Random Value}
+\PYG{+w}{                        }\PYG{n+nx}{k}\PYG{o}{:}\PYG{+w}{ }\PYG{n+nx}{a32\PYGZus{}to\PYGZus{}base64}\PYG{p}{(}\PYG{n+nx}{encryptedMasterKeyArray32}\PYG{p}{),}\PYG{+w}{                 }\PYG{c+c1}{// Encrypted Master Key}
+\PYG{+w}{                        }\PYG{n+nx}{hak}\PYG{o}{:}\PYG{+w}{ }\PYG{n+nx}{ab\PYGZus{}to\PYGZus{}base64}\PYG{p}{(}\PYG{n+nx}{hashedAuthenticationKeyBytes}\PYG{p}{),}\PYG{+w}{             }\PYG{c+c1}{// Hashed Authentication Key}
+\PYG{+w}{                        }\PYG{n+nx}{v}\PYG{o}{:}\PYG{+w}{ }\PYG{l+m+mf}{2}\PYG{+w}{                                                         }\PYG{c+c1}{// Version of this protocol}
+\PYG{+w}{                    }\PYG{p}{\PYGZcb{};}
+
+\PYG{+w}{                    }\PYG{c+c1}{// If this was a registration from the Pro page}
+\PYG{+w}{                    }\PYG{k}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{n+nx}{fromProPage}\PYG{+w}{ }\PYG{o}{===}\PYG{+w}{ }\PYG{k+kc}{true}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{                        }\PYG{n+nx}{req}\PYG{p}{.}\PYG{n+nx}{p}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mf}{1}\PYG{p}{;}
+\PYG{+w}{                    }\PYG{p}{\PYGZcb{}}
+
+\PYG{+w}{                    }\PYG{c+c1}{// Send signup link email}
+\PYG{+w}{                    }\PYG{n+nx}{security}\PYG{p}{.}\PYG{n+nx}{register}\PYG{p}{.}\PYG{n+nx}{sendSignupLink}\PYG{p}{(}\PYG{n+nx}{req}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nx}{firstName}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nx}{lastName}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nx}{email}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nx}{completeCallback}\PYG{p}{);}
+\PYG{+w}{                }\PYG{p}{\PYGZcb{});}
+\PYG{+w}{        }\PYG{p}{\PYGZcb{});}
+\PYG{+w}{    }\PYG{p}{\PYGZcb{}}
+\end{MintedVerbatim}

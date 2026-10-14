@@ -1,0 +1,49 @@
+\begin{MintedVerbatim}[commandchars=\\\{\}]
+
+\PYG{+w}{    }\PYG{n+nx}{startLogin}\PYG{o}{:}\PYG{+w}{ }\PYG{k+kd}{function}\PYG{p}{(}\PYG{n+nx}{email}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nx}{password}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nx}{pinCode}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nx}{rememberMe}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nx}{salt}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nx}{loginCompleteCallback}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+
+\PYG{+w}{        }\PYG{l+s+s1}{\PYGZsq{}use strict\PYGZsq{}}\PYG{p}{;}
+
+\PYG{+w}{        }\PYG{c+c1}{// Convert the salt and password to byte arrays}
+\PYG{+w}{        }\PYG{k+kd}{var}\PYG{+w}{ }\PYG{n+nx}{saltArrayBuffer}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n+nx}{base64\PYGZus{}to\PYGZus{}ab}\PYG{p}{(}\PYG{n+nx}{salt}\PYG{p}{);}
+\PYG{+w}{        }\PYG{k+kd}{var}\PYG{+w}{ }\PYG{n+nx}{saltBytes}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{o+ow}{new}\PYG{+w}{ }\PYG{n+nb}{Uint8Array}\PYG{p}{(}\PYG{n+nx}{saltArrayBuffer}\PYG{p}{);}
+\PYG{+w}{        }\PYG{k+kd}{var}\PYG{+w}{ }\PYG{n+nx}{passwordBytes}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n+nx}{security}\PYG{p}{.}\PYG{n+nx}{stringToByteArray}\PYG{p}{(}\PYG{n+nx}{password}\PYG{p}{);}
+
+\PYG{+w}{        }\PYG{c+c1}{// The number of iterations for the PPF and desired length in bits of the derived key}
+\PYG{+w}{        }\PYG{k+kd}{var}\PYG{+w}{ }\PYG{n+nx}{iterations}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n+nx}{security}\PYG{p}{.}\PYG{n+nx}{numOfIterations}\PYG{p}{;}
+\PYG{+w}{        }\PYG{k+kd}{var}\PYG{+w}{ }\PYG{n+nx}{derivedKeyLength}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n+nx}{security}\PYG{p}{.}\PYG{n+nx}{derivedKeyLengthInBits}\PYG{p}{;}
+
+\PYG{+w}{        }\PYG{c+c1}{// Set the callback to run after login is complete}
+\PYG{+w}{        }\PYG{n+nx}{security}\PYG{p}{.}\PYG{n+nx}{login}\PYG{p}{.}\PYG{n+nx}{loginCompleteCallback}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n+nx}{loginCompleteCallback}\PYG{p}{;}
+
+\PYG{+w}{        }\PYG{c+c1}{// Store the remember\PYGZhy{}me flag for any direct cals to this function (e.g. atomicSignIn)}
+\PYG{+w}{        }\PYG{n+nx}{security}\PYG{p}{.}\PYG{n+nx}{login}\PYG{p}{.}\PYG{n+nx}{rememberMe}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n+nx}{rememberMe}\PYG{+w}{ }\PYG{o}{!==}\PYG{+w}{ }\PYG{k+kc}{false}\PYG{p}{;}
+
+\PYG{+w}{        }\PYG{c+c1}{// Run the PPF}
+\PYG{+w}{        }\PYG{k}{return}\PYG{+w}{ }\PYG{n+nx}{security}\PYG{p}{.}\PYG{n+nx}{deriveKey}\PYG{p}{(}\PYG{n+nx}{saltBytes}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nx}{passwordBytes}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nx}{iterations}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nx}{derivedKeyLength}\PYG{p}{).}\PYG{n+nx}{then}\PYG{p}{((}\PYG{n+nx}{derivedKeyBytes}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{=\PYGZgt{}}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+
+\PYG{+w}{            }\PYG{c+c1}{// Get the first 16 bytes as the Encryption Key and the next 16 bytes as the Authentication Key}
+\PYG{+w}{            }\PYG{k+kd}{var}\PYG{+w}{ }\PYG{n+nx}{derivedEncryptionKeyBytes}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n+nx}{derivedKeyBytes}\PYG{p}{.}\PYG{n+nx}{subarray}\PYG{p}{(}\PYG{l+m+mf}{0}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mf}{16}\PYG{p}{);}
+\PYG{+w}{            }\PYG{k+kd}{var}\PYG{+w}{ }\PYG{n+nx}{derivedAuthenticationKeyBytes}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n+nx}{derivedKeyBytes}\PYG{p}{.}\PYG{n+nx}{subarray}\PYG{p}{(}\PYG{l+m+mf}{16}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mf}{32}\PYG{p}{);}
+\PYG{+w}{            }\PYG{k+kd}{var}\PYG{+w}{ }\PYG{n+nx}{authenticationKeyBase64}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n+nx}{ab\PYGZus{}to\PYGZus{}base64}\PYG{p}{(}\PYG{n+nx}{derivedAuthenticationKeyBytes}\PYG{p}{);}
+
+\PYG{+w}{            }\PYG{c+c1}{// Convert the Derived Encryption Key to a big endian array of 32 bit values for decrypting the Master Key}
+\PYG{+w}{            }\PYG{k+kd}{var}\PYG{+w}{ }\PYG{n+nx}{derivedEncryptionKeyArray32}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n+nx}{base64\PYGZus{}to\PYGZus{}a32}\PYG{p}{(}\PYG{n+nx}{ab\PYGZus{}to\PYGZus{}base64}\PYG{p}{(}\PYG{n+nx}{derivedEncryptionKeyBytes}\PYG{p}{));}
+
+\PYG{+w}{            }\PYG{c+c1}{// Authenticate with the API}
+\PYG{+w}{            }\PYG{k}{return}\PYG{+w}{ }\PYG{n+nx}{security}\PYG{p}{.}\PYG{n+nx}{login}\PYG{p}{.}\PYG{n+nx}{sendAuthenticationKey}\PYG{p}{(}
+\PYG{+w}{                }\PYG{n+nx}{email}\PYG{p}{,}
+\PYG{+w}{                }\PYG{n+nx}{pinCode}\PYG{p}{,}
+\PYG{+w}{                }\PYG{n+nx}{authenticationKeyBase64}\PYG{p}{,}
+\PYG{+w}{                }\PYG{n+nx}{derivedEncryptionKeyArray32}
+\PYG{+w}{            }\PYG{p}{);}
+\PYG{+w}{        }\PYG{p}{\PYGZcb{}).}\PYG{k}{catch}\PYG{p}{((}\PYG{n+nx}{ex}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{=\PYGZgt{}}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{            }\PYG{c+c1}{// @todo revamp and ditch the callbacks hell... \PYGZob{}ref: atomicSignIn\PYGZcb{}}
+\PYG{+w}{            }\PYG{k}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{n+nx}{security}\PYG{p}{.}\PYG{n+nx}{login}\PYG{p}{.}\PYG{n+nx}{loginCompleteCallback}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{                }\PYG{k}{return}\PYG{+w}{ }\PYG{n+nx}{security}\PYG{p}{.}\PYG{n+nx}{login}\PYG{p}{.}\PYG{n+nx}{loginCompleteCallback}\PYG{p}{(}\PYG{n+nx}{ex}\PYG{p}{);}
+\PYG{+w}{            }\PYG{p}{\PYGZcb{}}
+\PYG{+w}{            }\PYG{k}{throw}\PYG{+w}{ }\PYG{n+nx}{ex}\PYG{p}{;}
+\PYG{+w}{        }\PYG{p}{\PYGZcb{});}
+\PYG{+w}{    }\PYG{p}{\PYGZcb{}}
+
+\end{MintedVerbatim}

@@ -1,0 +1,65 @@
+\begin{MintedVerbatim}[commandchars=\\\{\}]
+
+\PYG{+w}{    }\PYG{n+nx}{deriveKey}\PYG{o}{:}\PYG{+w}{ }\PYG{k}{async}\PYG{+w}{ }\PYG{k+kd}{function}\PYG{p}{(}\PYG{n+nx}{saltBytes}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nx}{passwordBytes}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nx}{iterations}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nx}{derivedKeyLength}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{        }\PYG{l+s+s1}{\PYGZsq{}use strict\PYGZsq{}}\PYG{p}{;}
+
+\PYG{+w}{        }\PYG{c+c1}{// If Web Crypto method supported, use that as it\PYGZsq{}s nearly as fast as native}
+\PYG{+w}{        }\PYG{k}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{n+nb}{window}\PYG{p}{.}\PYG{n+nx}{crypto}\PYG{+w}{ }\PYG{o}{\PYGZam{}\PYGZam{}}\PYG{+w}{ }\PYG{n+nb}{window}\PYG{p}{.}\PYG{n+nx}{crypto}\PYG{p}{.}\PYG{n+nx}{subtle}\PYG{+w}{ }\PYG{o}{\PYGZam{}\PYGZam{}}\PYG{+w}{ }\PYG{o}{!}\PYG{n+nb}{window}\PYG{p}{.}\PYG{n+nx}{is\PYGZus{}microsoft}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{            }\PYG{k}{return}\PYG{+w}{ }\PYG{n+nx}{security}\PYG{p}{.}\PYG{n+nx}{deriveKeyWithWebCrypto}\PYG{p}{(}\PYG{n+nx}{saltBytes}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nx}{passwordBytes}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nx}{iterations}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nx}{derivedKeyLength}\PYG{p}{);}
+\PYG{+w}{        }\PYG{p}{\PYGZcb{}}
+
+\PYG{+w}{        }\PYG{c+c1}{// Otherwise, use asmCrypto which is the next fastest}
+\PYG{+w}{        }\PYG{k}{return}\PYG{+w}{ }\PYG{n+nx}{security}\PYG{p}{.}\PYG{n+nx}{deriveKeyWithAsmCrypto}\PYG{p}{(}\PYG{n+nx}{saltBytes}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nx}{passwordBytes}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nx}{iterations}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nx}{derivedKeyLength}\PYG{p}{);}
+\PYG{+w}{    }\PYG{p}{\PYGZcb{},}
+
+\PYG{+w}{    }\PYG{c+cm}{/**}
+\PYG{c+cm}{     * Derive the key using the Web Crypto API}
+\PYG{c+cm}{     * @param \PYGZob{}Uint8Array\PYGZcb{} saltBytes The salt as a byte array}
+\PYG{c+cm}{     * @param \PYGZob{}Uint8Array\PYGZcb{} passwordBytes The password as a byte array}
+\PYG{c+cm}{     * @param \PYGZob{}Number\PYGZcb{} iterations The cost factor / number of iterations of the PPF to perform}
+\PYG{c+cm}{     * @param \PYGZob{}Number\PYGZcb{} derivedKeyLength The length of the derived key to create}
+\PYG{c+cm}{     */}
+\PYG{+w}{    }\PYG{n+nx}{deriveKeyWithWebCrypto}\PYG{o}{:}\PYG{+w}{ }\PYG{k}{async}\PYG{+w}{ }\PYG{k+kd}{function}\PYG{p}{(}\PYG{n+nx}{saltBytes}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nx}{passwordBytes}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nx}{iterations}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nx}{derivedKeyLength}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{        }\PYG{l+s+s1}{\PYGZsq{}use strict\PYGZsq{}}\PYG{p}{;}
+
+\PYG{+w}{        }\PYG{c+c1}{// Import the password as the key}
+\PYG{+w}{        }\PYG{k}{return}\PYG{+w}{ }\PYG{n+nx}{crypto}\PYG{p}{.}\PYG{n+nx}{subtle}\PYG{p}{.}\PYG{n+nx}{importKey}\PYG{p}{(}\PYG{l+s+s1}{\PYGZsq{}raw\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nx}{passwordBytes}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s+s1}{\PYGZsq{}PBKDF2\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{k+kc}{false}\PYG{p}{,}\PYG{+w}{ }\PYG{p}{[}\PYG{l+s+s1}{\PYGZsq{}deriveBits\PYGZsq{}}\PYG{p}{])}
+\PYG{+w}{            }\PYG{p}{.}\PYG{n+nx}{then}\PYG{p}{((}\PYG{n+nx}{key}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{=\PYGZgt{}}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+
+\PYG{+w}{                }\PYG{c+c1}{// Required PBKDF2 parameters}
+\PYG{+w}{                }\PYG{k+kd}{var}\PYG{+w}{ }\PYG{n+nx}{params}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{                    }\PYG{n+nx}{name}\PYG{o}{:}\PYG{+w}{ }\PYG{l+s+s1}{\PYGZsq{}PBKDF2\PYGZsq{}}\PYG{p}{,}
+\PYG{+w}{                    }\PYG{n+nx}{hash}\PYG{o}{:}\PYG{+w}{ }\PYG{l+s+s1}{\PYGZsq{}SHA\PYGZhy{}512\PYGZsq{}}\PYG{p}{,}
+\PYG{+w}{                    }\PYG{n+nx}{salt}\PYG{o}{:}\PYG{+w}{ }\PYG{n+nx}{saltBytes}\PYG{p}{,}
+\PYG{+w}{                    }\PYG{n+nx}{iterations}\PYG{o}{:}\PYG{+w}{ }\PYG{n+nx}{iterations}
+\PYG{+w}{                }\PYG{p}{\PYGZcb{};}
+
+\PYG{+w}{                }\PYG{c+c1}{// Derive bits using the algorithm}
+\PYG{+w}{                }\PYG{k}{return}\PYG{+w}{ }\PYG{n+nx}{crypto}\PYG{p}{.}\PYG{n+nx}{subtle}\PYG{p}{.}\PYG{n+nx}{deriveBits}\PYG{p}{(}\PYG{n+nx}{params}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nx}{key}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nx}{derivedKeyLength}\PYG{p}{);}
+\PYG{+w}{            }\PYG{p}{\PYGZcb{})}
+\PYG{+w}{            }\PYG{p}{.}\PYG{n+nx}{then}\PYG{p}{((}\PYG{n+nx}{derivedKeyArrayBuffer}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{=\PYGZgt{}}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+
+\PYG{+w}{                }\PYG{c+c1}{// Convert to a byte array}
+\PYG{+w}{                }\PYG{c+c1}{// Pass the derived key to the callback}
+\PYG{+w}{                }\PYG{k}{return}\PYG{+w}{ }\PYG{o+ow}{new}\PYG{+w}{ }\PYG{n+nb}{Uint8Array}\PYG{p}{(}\PYG{n+nx}{derivedKeyArrayBuffer}\PYG{p}{);}
+\PYG{+w}{            }\PYG{p}{\PYGZcb{});}
+\PYG{+w}{    }\PYG{p}{\PYGZcb{},}
+
+\PYG{+w}{    }\PYG{c+cm}{/**}
+\PYG{c+cm}{     * Derive the key using asmCrypto}
+\PYG{c+cm}{     * @param \PYGZob{}Uint8Array\PYGZcb{} saltBytes The salt as a byte array}
+\PYG{c+cm}{     * @param \PYGZob{}Uint8Array\PYGZcb{} passwordBytes The password as a byte array}
+\PYG{c+cm}{     * @param \PYGZob{}Number\PYGZcb{} iterations The cost factor / number of iterations of the PPF to perform}
+\PYG{c+cm}{     * @param \PYGZob{}Number\PYGZcb{} derivedKeyLength The length of the derived key to create}
+\PYG{c+cm}{     */}
+\PYG{+w}{    }\PYG{n+nx}{deriveKeyWithAsmCrypto}\PYG{o}{:}\PYG{+w}{ }\PYG{k}{async}\PYG{+w}{ }\PYG{k+kd}{function}\PYG{p}{(}\PYG{n+nx}{saltBytes}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nx}{passwordBytes}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nx}{iterations}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nx}{derivedKeyLength}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{        }\PYG{l+s+s1}{\PYGZsq{}use strict\PYGZsq{}}\PYG{p}{;}
+
+\PYG{+w}{        }\PYG{c+c1}{// Convert the desired derived key length to bytes and derive the key}
+\PYG{+w}{        }\PYG{k+kd}{var}\PYG{+w}{ }\PYG{n+nx}{keyLengthBytes}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n+nx}{derivedKeyLength}\PYG{+w}{ }\PYG{o}{/}\PYG{+w}{ }\PYG{l+m+mf}{8}\PYG{p}{;}
+
+\PYG{+w}{        }\PYG{c+c1}{// Pass the derived key to the callback}
+\PYG{+w}{        }\PYG{k}{return}\PYG{+w}{ }\PYG{n+nx}{asmCrypto}\PYG{p}{.}\PYG{n+nx}{PBKDF2\PYGZus{}HMAC\PYGZus{}SHA512}\PYG{p}{.}\PYG{n+nx}{bytes}\PYG{p}{(}\PYG{n+nx}{passwordBytes}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nx}{saltBytes}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nx}{iterations}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nx}{keyLengthBytes}\PYG{p}{);}
+\PYG{+w}{    }\PYG{p}{\PYGZcb{}}
+
+\end{MintedVerbatim}

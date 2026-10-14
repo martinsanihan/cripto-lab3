@@ -1,0 +1,46 @@
+\begin{MintedVerbatim}[commandchars=\\\{\}]
+
+\PYG{+w}{    }\PYG{n+nx}{deriveKeysFromPassword}\PYG{o}{:}\PYG{+w}{ }\PYG{k}{async}\PYG{+w}{ }\PYG{k+kd}{function}\PYG{p}{(}\PYG{n+nx}{password}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nx}{masterKeyArray32}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{        }\PYG{l+s+s1}{\PYGZsq{}use strict\PYGZsq{}}\PYG{p}{;}
+
+\PYG{+w}{        }\PYG{c+c1}{// Create the 128 bit (16 byte) Client Random Value and Salt}
+\PYG{+w}{        }\PYG{k+kd}{var}\PYG{+w}{ }\PYG{n+nx}{saltLengthInBytes}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n+nx}{security}\PYG{p}{.}\PYG{n+nx}{saltLengthInBits}\PYG{+w}{ }\PYG{o}{/}\PYG{+w}{ }\PYG{l+m+mf}{8}\PYG{p}{;}
+\PYG{+w}{        }\PYG{k+kd}{var}\PYG{+w}{ }\PYG{n+nx}{clientRandomValueBytes}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n+nx}{crypto}\PYG{p}{.}\PYG{n+nx}{getRandomValues}\PYG{p}{(}\PYG{o+ow}{new}\PYG{+w}{ }\PYG{n+nb}{Uint8Array}\PYG{p}{(}\PYG{n+nx}{saltLengthInBytes}\PYG{p}{));}
+\PYG{+w}{        }\PYG{k+kd}{var}\PYG{+w}{ }\PYG{n+nx}{saltBytes}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n+nx}{security}\PYG{p}{.}\PYG{n+nx}{createSalt}\PYG{p}{(}\PYG{n+nx}{clientRandomValueBytes}\PYG{p}{);}
+
+\PYG{+w}{        }\PYG{c+c1}{// Trim the password and convert it from ASCII/UTF\PYGZhy{}8 to a byte array}
+\PYG{+w}{        }\PYG{k+kd}{var}\PYG{+w}{ }\PYG{n+nx}{passwordTrimmed}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n+nx}{\PYGZdl{}}\PYG{p}{.}\PYG{n+nx}{trim}\PYG{p}{(}\PYG{n+nx}{password}\PYG{p}{);}
+\PYG{+w}{        }\PYG{k+kd}{var}\PYG{+w}{ }\PYG{n+nx}{passwordBytes}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n+nx}{security}\PYG{p}{.}\PYG{n+nx}{stringToByteArray}\PYG{p}{(}\PYG{n+nx}{passwordTrimmed}\PYG{p}{);}
+
+\PYG{+w}{        }\PYG{c+c1}{// The number of iterations for the PPF and desired length in bits of the derived key}
+\PYG{+w}{        }\PYG{k+kd}{var}\PYG{+w}{ }\PYG{n+nx}{iterations}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n+nx}{security}\PYG{p}{.}\PYG{n+nx}{numOfIterations}\PYG{p}{;}
+\PYG{+w}{        }\PYG{k+kd}{var}\PYG{+w}{ }\PYG{n+nx}{derivedKeyLength}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n+nx}{security}\PYG{p}{.}\PYG{n+nx}{derivedKeyLengthInBits}\PYG{p}{;}
+
+\PYG{+w}{        }\PYG{c+c1}{// Run the PPF}
+\PYG{+w}{        }\PYG{k+kd}{const}\PYG{+w}{ }\PYG{n+nx}{derivedKeyBytes}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{k}{await}\PYG{+w}{ }\PYG{n+nx}{security}\PYG{p}{.}\PYG{n+nx}{deriveKey}\PYG{p}{(}\PYG{n+nx}{saltBytes}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nx}{passwordBytes}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nx}{iterations}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nx}{derivedKeyLength}\PYG{p}{);}
+
+\PYG{+w}{        }\PYG{c+c1}{// Get the first 16 bytes as the Encryption Key and the next 16 bytes as the Authentication Key}
+\PYG{+w}{        }\PYG{k+kd}{const}\PYG{+w}{ }\PYG{n+nx}{derivedEncryptionKeyBytes}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n+nx}{derivedKeyBytes}\PYG{p}{.}\PYG{n+nx}{subarray}\PYG{p}{(}\PYG{l+m+mf}{0}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mf}{16}\PYG{p}{);}
+\PYG{+w}{        }\PYG{k+kd}{const}\PYG{+w}{ }\PYG{n+nx}{derivedAuthenticationKeyBytes}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n+nx}{derivedKeyBytes}\PYG{p}{.}\PYG{n+nx}{subarray}\PYG{p}{(}\PYG{l+m+mf}{16}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mf}{32}\PYG{p}{);}
+
+\PYG{+w}{        }\PYG{c+c1}{// Get a hash of the Authentication Key which the API will use for authentication at login time}
+\PYG{+w}{        }\PYG{k+kd}{let}\PYG{+w}{ }\PYG{n+nx}{hashedAuthenticationKeyBytes}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n+nx}{asmCrypto}\PYG{p}{.}\PYG{n+nx}{SHA256}\PYG{p}{.}\PYG{n+nx}{bytes}\PYG{p}{(}\PYG{n+nx}{derivedAuthenticationKeyBytes}\PYG{p}{);}
+
+\PYG{+w}{        }\PYG{c+c1}{// Keep only the first 128 bits (16 bytes) of the Hashed Authentication Key}
+\PYG{+w}{        }\PYG{n+nx}{hashedAuthenticationKeyBytes}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n+nx}{hashedAuthenticationKeyBytes}\PYG{p}{.}\PYG{n+nx}{subarray}\PYG{p}{(}\PYG{l+m+mf}{0}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mf}{16}\PYG{p}{);}
+
+\PYG{+w}{        }\PYG{c+c1}{// Convert the Derived Encryption Key to a big endian array of 32 bytes, then encrypt the Master Key}
+\PYG{+w}{        }\PYG{k+kd}{const}\PYG{+w}{ }\PYG{n+nx}{derivedEncryptionKeyArray32}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n+nx}{base64\PYGZus{}to\PYGZus{}a32}\PYG{p}{(}\PYG{n+nx}{ab\PYGZus{}to\PYGZus{}base64}\PYG{p}{(}\PYG{n+nx}{derivedEncryptionKeyBytes}\PYG{p}{));}
+\PYG{+w}{        }\PYG{k+kd}{const}\PYG{+w}{ }\PYG{n+nx}{cipherObject}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{o+ow}{new}\PYG{+w}{ }\PYG{n+nx}{sjcl}\PYG{p}{.}\PYG{n+nx}{cipher}\PYG{p}{.}\PYG{n+nx}{aes}\PYG{p}{(}\PYG{n+nx}{derivedEncryptionKeyArray32}\PYG{p}{);}
+\PYG{+w}{        }\PYG{k+kd}{const}\PYG{+w}{ }\PYG{n+nx}{encryptedMasterKeyArray32}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n+nx}{encrypt\PYGZus{}key}\PYG{p}{(}\PYG{n+nx}{cipherObject}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nx}{masterKeyArray32}\PYG{p}{);}
+
+\PYG{+w}{        }\PYG{c+c1}{// Pass the Client Random Value, Encrypted Master Key and Hashed Authentication Key to the calling function}
+\PYG{+w}{        }\PYG{k}{return}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{            }\PYG{n+nx}{clientRandomValueBytes}\PYG{p}{,}
+\PYG{+w}{            }\PYG{n+nx}{encryptedMasterKeyArray32}\PYG{p}{,}
+\PYG{+w}{            }\PYG{n+nx}{hashedAuthenticationKeyBytes}\PYG{p}{,}
+\PYG{+w}{            }\PYG{n+nx}{derivedAuthenticationKeyBytes}
+\PYG{+w}{        }\PYG{p}{\PYGZcb{};}
+\PYG{+w}{    }\PYG{p}{\PYGZcb{}}
+
+\end{MintedVerbatim}
